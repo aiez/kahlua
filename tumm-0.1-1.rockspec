@@ -2,7 +2,7 @@ package = "tumm"
 version = "0.1-1"
 source = {
   -- gist git url; tiny.cc/tumm redirects to the gist page
-  url = "git+https://gist.github.com/timm/TUMM_GIST_ID.git"
+  url = "git+https://gist.github.com/timm/4990faa5b0ddc9b1db2e17ce310b205e.git"
 }
 description = {
   summary = "Useful short lua functions (lists, csv, stats, rand, tests)",
