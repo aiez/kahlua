@@ -6,6 +6,7 @@
 -- demos: lua tumm.lua --all   (or --lists --stats --str ...)
 local l = {}
 local abs,floor,log = math.abs, math.floor, math.log
+local max = math.max
 
 -- ## rand --------------------------------------------------
 
@@ -54,6 +55,9 @@ function l.push(t,x) t[1+#t]=x; return x end
 -- sort t in place; return t
 function l.sort(t,fn) table.sort(t,fn); return t end
 
+-- identity; default fn arg (n.b. stats twin is l.sames)
+function l.same(x) return x end
+
 -- closure: nth field of a row
 function l.nth(n) return function(t) return t[n] end end
 
@@ -80,9 +84,18 @@ function l.keys(t)
 function l.list(t,    u)
   u={}; for _,v in pairs(t) do u[1+#u]=v end; return u end
 
--- shallow copy of the list part of t
-function l.copy(t,    u)
-  u={}; for i,v in ipairs(t) do u[i]=v end; return u end
+-- shallow copy of the list part of t (map + identity)
+function l.copy(t) return l.map(t, l.same) end
+
+-- deep copy: recurses, keeps metatables, survives cycles
+function l.deepCopy(t,seen,    u)
+  if type(t) ~= "table" then return t end
+  if seen and seen[t] then return seen[t] end
+  seen = seen or {}
+  u = {}; seen[t] = u
+  for k,v in pairs(t) do
+    u[l.deepCopy(k,seen)] = l.deepCopy(v,seen) end
+  return setmetatable(u, getmetatable(t)) end
 
 -- t[lo..hi] inclusive; negatives count from the end
 function l.slice(t,lo,hi,    u,n)
@@ -164,7 +177,7 @@ function l.csv(filename,    f)
 
 -- sum of a list (fn optional: sum of fn(x))
 function l.sum(t,fn,    s)
-  s=0; fn = fn or function(x) return x end
+  s=0; fn = fn or l.same
   for _,v in ipairs(t) do s = s + fn(v) end
   return s end
 
@@ -207,6 +220,98 @@ function l.bisect(t,x,strict,    lo,hi,mid,go)
     if go then lo=mid+1 else hi=mid-1 end end
   return lo-1 end
 
+-- pooled stdev of two raw samples
+function l.pooledSd(xs,ys,    nx,sx,ny,sy)
+  nx,sx = #xs, (select(2, l.welfords(xs)))
+  ny,sy = #ys, (select(2, l.welfords(ys)))
+  return (((nx-1)*sx*sx + (ny-1)*sy*sy)/(nx+ny-2))^0.5 end
+
+-- Cliff's delta effect size; ys pre-sorted
+function l.cliffsDelta(xs,ys,    n,p,ngt,nlt)
+  n,p,ngt,nlt = #xs,#ys,0,0
+  for _,v in ipairs(xs) do
+    ngt = ngt + l.bisect(ys,v,true)
+    nlt = nlt + (p - l.bisect(ys,v)) end
+  return abs(ngt-nlt)/(n*p) end
+
+-- Kolmogorov-Smirnov max CDF gap; both pre-sorted
+function l.ks(xs,ys,    n,p,d,gap)
+  n,p,d = #xs,#ys,0
+  gap = function(v)
+    return abs(l.bisect(xs,v)/n - l.bisect(ys,v)/p) end
+  for _,v in ipairs(xs) do d=max(d,gap(v)) end
+  for _,v in ipairs(ys) do d=max(d,gap(v)) end
+  return d end
+
+-- xs,ys stats-same? all of: mid gap<=eps, cliffs, ks
+function l.sames(xs,ys,eps,cliffs,ksconf,    n,p,a,b)
+  eps,cliffs,ksconf = eps or 0, cliffs or 0.195, ksconf or 1.36
+  a,b = l.sort({table.unpack(xs)}), l.sort({table.unpack(ys)})
+  n,p = #a,#b
+  if abs(a[n//2+1]-b[p//2+1])<=eps then return true end
+  if l.cliffsDelta(a,b)>cliffs then return false end
+  return l.ks(a,b) <= ksconf*((n+p)/(n*p))^0.5 end
+
+-- dict[k]=nums -> all keys stats-same as best mu
+function l.topTier(dict,cmp,eps,cliffs,ksconf,
+                   out,names,best,cand,th)
+  out={}
+  names = l.keysort(l.keys(dict),
+                    function(k) return (l.welfords(dict[k])) end,
+                    cmp)
+  best = dict[names[1]]
+  out[names[1]] = (l.welfords(best))
+  for i=2,#names do
+    cand = dict[names[i]]
+    th = (eps or 0) * l.pooledSd(best, cand)
+    if not l.sames(best,cand,th,cliffs,ksconf) then break end
+    out[names[i]] = (l.welfords(cand)) end
+  return out end
+
+-- ## Confuse -----------------------------------------------
+local Confuse = {}
+l.Confuse = Confuse
+
+-- ctor: confusion matrix counts + klass set
+function Confuse.new(file)
+  return l.new(Confuse, {t={}, klasses={}, file=file or ""}) end
+
+-- bump count for (want,got) pair
+function Confuse.add(i,want,got)
+  i.t[want]       = i.t[want] or {}
+  i.t[want][got]  = (i.t[want][got] or 0) + 1
+  i.klasses[want], i.klasses[got] = true, true end
+
+-- per-klass {tn,fn,fp,tp,acc,pred,pf,pd,...}
+function Confuse.scores(i,    out,tn,fn,fp,tp,n)
+  out = {}
+  for _,klass in ipairs(l.sort(l.keys(i.klasses))) do
+    tn,fn,fp,tp = 0,0,0,0
+    for want,gots in pairs(i.t) do
+      for got,cnt in pairs(gots) do
+        if     want==klass and got==klass then tp=tp+cnt
+        elseif want==klass                then fn=fn+cnt
+        elseif got==klass                 then fp=fp+cnt
+        else   tn=tn+cnt end end end
+    n = tn+fn+fp+tp
+    out[1+#out] = {klass=klass, tn=tn, fn=fn, fp=fp, tp=tp,
+      n=n, file=i.file,
+      acc =100*(tp+tn)/(n+1e-32),
+      pred=100*tp/(tp+fp+1e-32),
+      pf  =100*fp/(fp+tn+1e-32),
+      pd  =100*tp/(tp+fn+1e-32)} end
+  return out end
+
+-- print confusion stats as formatted table
+function Confuse.show(i,    hdr,row)
+  hdr = "%5s %5s %5s %5s %5s %5s %5s %5s %5s %-8s %s"
+  row = "%5d %5d %5d %5d %5.0f %5.0f %5.0f %5.0f %5d %-8s %s"
+  print(hdr:format("tn","fn","fp","tp","acc","pred","pf","pd",
+                   "n","klass","file"))
+  for _,r in ipairs(i:scores()) do
+    print(row:format(r.tn, r.fn, r.fp, r.tp,
+      r.acc, r.pred, r.pf, r.pd, r.n, r.klass, r.file)) end end
+
 -- ## test --------------------------------------------------
 
 -- cases {tag,got,want[,tol]}; print each; ok[,failTag]
@@ -218,6 +323,31 @@ function l.chk(...)
       return false, c[1] end end
   return true end
 
+-- run one eg: seed reset + pcall; returns err|nil
+function l.run1(fn,    ok,flag,msg)
+  l.srand(1)
+  ok, flag, msg = pcall(fn)
+  if not ok      then return "ERR "..tostring(flag) end
+  if flag==false then return tostring(msg) end end
+
+-- argv eg-runner: -h help, --all, or any --name in egs
+function l.main(eg,usage,    a,fails,err,names)
+  a, fails = _G.arg, {}
+  if #a==0 or a[1]=="-h" or a[1]=="--help" then
+    print(usage or "usage: --all | ACTION...")
+    for _,k in ipairs(l.sort(l.keys(eg))) do
+      print("  "..k) end
+    return end
+  names = a[1]=="--all" and l.sort(l.keys(eg)) or a
+  for _,txt in ipairs(names) do
+    if eg[txt] then
+      print("--",txt)
+      err = l.run1(eg[txt])
+      if err then l.push(fails, txt..": "..err) end end end
+  for _,f in ipairs(fails) do print("FAIL", f) end
+  print(#fails==0 and "all pass"
+        or (#fails.." failed")) end
+
 -- ## egs (lua tumm.lua --name | --all | -h) ----------------
 local eg = {}
 
@@ -226,11 +356,23 @@ eg["--lists"] = function(    t,u)
   u = l.sort(l.list{a=1,b=2,c=3})
   return l.chk({"shuffle",#t,5},
     {"sort",l.sort(l.copy(t))[1],1},
+    {"same",l.same(42),42},
     {"list",u[1]..","..u[3],"1,3"},
     {"slice",l.slice({10,20,30,40,50},2,-2)[3],40},
     {"keysort",l.keysort({{1},{0},{2}},l.nth(1))[1][1],0},
     {"argmin",
       l.argmin({30,10,50},function(x) return x end),2}) end
+
+eg["--copy"] = function(    a,b,c)
+  c = l.copy{10,20,30}
+  a = l.new({}, {x={1,2}, y=3})
+  a.self = a                                       -- cycle
+  b = l.deepCopy(a)
+  return l.chk({"copy",c[2],20},
+    {"fresh",b.x ~= a.x,true},
+    {"vals",b.x[2],2},
+    {"cycle",b.self == b,true},
+    {"mt",getmetatable(b) == getmetatable(a),true}) end
 
 eg["--rand"] = function(    d,c,k,n,mu,m2)
   d,c = {a=1,b=10,c=100}, {a=0,b=0,c=0}
@@ -252,6 +394,29 @@ eg["--stats"] = function(    n,mu,m2)
     {"mode",l.mode{a=1,b=5,c=2},"b"},
     {"ent",l.ent{a=1,b=1,c=1,d=1},2,1E-9},
     {"bisect",l.bisect({1,2,2,3,5,8},2),3}) end
+
+eg["--sames"] = function(    mk,a,b,c,tier)
+  mk = function(off,    u) u={}
+    for _=1,50 do u[1+#u]=l.rand()+off end; return u end
+  a,b,c = mk(0), mk(0), mk(5)
+  tier = l.topTier({a=a,b=b,c=c}, nil, 0.35)
+  return l.chk(
+    {"cliffs",l.cliffsDelta({1,2,3},{10,11,12}),1},
+    {"ks",l.ks({1,2,3},{10,11,12}),1},
+    {"pooledSd",
+      l.pooledSd({1,2,3,4,5},{1,2,3,4,5}),1.5811,1E-3},
+    {"same",l.sames(a,b,0.35*l.pooledSd(a,b)),true},
+    {"diff",l.sames(a,c,0.35*l.pooledSd(a,c)),false},
+    {"tier a+b",tier.a~=nil and tier.b~=nil,true},
+    {"tier no c",tier.c,nil}) end
+
+eg["--confuse"] = function(    cf)
+  cf = Confuse.new("data.csv")
+  for _=1,50 do cf:add("yes","yes") end
+  for _=1, 5 do cf:add("yes","no")  end
+  for _=1, 3 do cf:add("no","yes")  end
+  for _=1,40 do cf:add("no","no")   end
+  cf:show(); return true end
 
 eg["--str"] = function()
   return l.chk(
@@ -277,30 +442,6 @@ eg["--obj"] = function(    Dog,d)
   d = Dog.new"rex"
   return l.chk({"new",d:speak(),"rex woofs"}) end
 
--- run one eg: seed reset + pcall; returns err|nil
-local function run1(fn,    ok,flag,msg)
-  l.srand(1)
-  ok, flag, msg = pcall(fn)
-  if not ok      then return "ERR "..tostring(flag) end
-  if flag==false then return tostring(msg) end end
-
--- argv dispatch: -h help, --all, or any --name in egs
-local function main(    a,fails,err,names)
-  a, fails = _G.arg, {}
-  if #a==0 or a[1]=="-h" or a[1]=="--help" then
-    print("usage: lua tumm.lua --all | ACTION...")
-    for _,k in ipairs(l.sort(l.keys(eg))) do
-      print("  "..k) end
-    return end
-  names = a[1]=="--all" and l.sort(l.keys(eg)) or a
-  for _,txt in ipairs(names) do
-    if eg[txt] then
-      print("--",txt)
-      err = run1(eg[txt])
-      if err then l.push(fails, txt..": "..err) end end end
-  for _,f in ipairs(fails) do print("FAIL", f) end
-  print(#fails==0 and "all pass"
-        or (#fails.." failed")) end
-
-if (arg or {})[0] and arg[0]:find"tumm%.lua$" then main() end
+if (arg or {})[0] and arg[0]:find"tumm%.lua$" then
+  l.main(eg, "usage: lua tumm.lua --all | ACTION...") end
 return l

@@ -2,11 +2,12 @@
 <a href="https://timm.fyi"><img align="right" alt="Author" src="https://img.shields.io/badge/Author-timm-dc143c?logo=readme&logoColor=white"></a><img align="right" alt="Language" src="https://img.shields.io/badge/Language-Lua-000080?logo=lua&logoColor=white"><img align="right" alt="License" src="https://img.shields.io/badge/License-MIT-32cd32?logo=open-source-initiative&logoColor=white"><img align="right" alt="Purpose" src="https://img.shields.io/badge/Purpose-Utilities·Teaching-7b68ee?logo=githubcopilot&logoColor=white">
 
 ### [http://tiny.cc/tumm](http://tiny.cc/tumm)
-TUMM = Tim's Useful Micro Methods. One file, ~40 short Lua
+TUMM = Tim's Useful Micro Methods. One file, ~50 short Lua
 functions that kept reappearing across my other Lua projects:
-lists, strings, random, csv, stats, objects, tests. No
-dependencies beyond Lua 5.3+. Every function: one line of
-comment, a few lines of code, 65 columns max.
+lists, strings, random, csv, stats (incl. effect-size tests +
+confusion matrix), objects, tests. No dependencies beyond Lua
+5.3+. Every function: one line of comment, a few lines of code,
+65 columns max.
 
 ```bash
 # install and test
@@ -41,13 +42,19 @@ lua tumm.lua --all
       rand     srand rand any anys shuffle pickDict irwinHall
                (portable Park-Miller PRNG: seeded runs match
                 across machines and languages)
-      lists    push sort nth lt gt map kap keys list copy
-               slice keysort argmin
+      lists    push sort same nth lt gt map kap keys list
+               copy deepCopy slice keysort argmin
       objects  new (metatable binder; tiny OO in one line)
       strings  fmt trim thing o o2
       files    path csv
       stats    sum mean welford welfords sd mode ent bisect
-      test     chk
+               pooledSd cliffsDelta ks sames topTier
+      Confuse  confusion matrix: new add scores show
+      test     chk run1 main (reusable argv eg-runner: any
+               eg{} table gets -h/--all/--name dispatch free)
+
+    n.b. same(x) = identity; sames(xs,ys) = stats-same
+    (median gap + Cliff's delta + KS, all must agree).
 
 ## TESTS
 
@@ -56,7 +63,8 @@ lua tumm.lua --all
       lua tumm.lua --all
       lua tumm.lua --lists --stats     # run a subset
 
-    Actions: --csv --lists --obj --rand --stats --str
+    Actions: --confuse --copy --csv --lists --obj --rand
+             --sames --stats --str
     Each prints `tag = value` check lines; runs end
     "all pass" or "N failed".
 
