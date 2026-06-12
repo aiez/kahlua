@@ -1,9 +1,9 @@
 #!/usr/bin/env lua
--- tumm.lua: useful short lua functions, collected from the
+-- kah.lua: useful short lua functions, collected from the
 -- bits that kept reappearing across my other lua projects.
 -- (c) 2026 Tim Menzies <timm@ieee.org>, MIT license
--- usage: local l = require"tumm"
--- demos: lua tumm.lua --all   (or --lists --stats --str ...)
+-- usage: local l = require"kah"
+-- demos: lua kah.lua --all   (or --lists --stats --str ...)
 local l = {}
 local abs,floor,log = math.abs, math.floor, math.log
 local max = math.max
@@ -348,7 +348,7 @@ function l.main(eg,usage,    a,fails,err,names)
   print(#fails==0 and "all pass"
         or (#fails.." failed")) end
 
--- ## egs (lua tumm.lua --name | --all | -h) ----------------
+-- ## egs (lua kah.lua --name | --all | -h) ----------------
 local eg = {}
 
 eg["--lists"] = function(    t,u)
@@ -442,6 +442,6 @@ eg["--obj"] = function(    Dog,d)
   d = Dog.new"rex"
   return l.chk({"new",d:speak(),"rex woofs"}) end
 
-if (arg or {})[0] and arg[0]:find"tumm%.lua$" then
-  l.main(eg, "usage: lua tumm.lua --all | ACTION...") end
+if (arg or {})[0] and arg[0]:find"kah%.lua$" then
+  l.main(eg, "usage: lua kah.lua --all | ACTION...") end
 return l

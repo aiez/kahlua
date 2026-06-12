@@ -1,43 +1,42 @@
 <!-- Copyright (c) 2026 Tim Menzies, MIT License https://opensource.org/licenses/MIT -->
 <a href="https://timm.fyi"><img align="right" alt="Author" src="https://img.shields.io/badge/Author-timm-dc143c?logo=readme&logoColor=white"></a><img align="right" alt="Language" src="https://img.shields.io/badge/Language-Lua-000080?logo=lua&logoColor=white"><img align="right" alt="License" src="https://img.shields.io/badge/License-MIT-32cd32?logo=open-source-initiative&logoColor=white"><img align="right" alt="Purpose" src="https://img.shields.io/badge/Purpose-Utilities·Teaching-7b68ee?logo=githubcopilot&logoColor=white">
 
-### [http://tiny.cc/tumm](http://tiny.cc/tumm)
-TUMM = Tim's Useful Micro Methods. One file, ~50 short Lua
-functions that kept reappearing across my other Lua projects:
-lists, strings, random, csv, stats (incl. effect-size tests +
-confusion matrix), objects, tests. No dependencies beyond Lua
-5.3+. Every function: one line of comment, a few lines of code,
-65 columns max.
+### [http://tiny.cc/kah-lua](http://tiny.cc/kah-lua)
+KAH: one file, ~50 short Lua functions that kept reappearing
+across my other Lua projects: lists, strings, random, csv, stats
+(incl. effect-size tests + confusion matrix), objects, tests. No
+dependencies beyond Lua 5.3+. Every function: one line of
+comment, a few lines of code, 65 columns max.
 
 ```bash
 # install and test
 git clone http://tiny.cc/konfig ../konfig
-git clone http://tiny.cc/tumm tumm && cd tumm
-lua tumm.lua --all
+git clone http://tiny.cc/kah-lua kah && cd kah
+lua kah.lua --all
 ```
 
-<a href="http://tiny.cc/tumm"><img width="150" align="right" alt="qr" src="https://tiny.cc/tiny/qr-image/tiny.cc~tumm~l~150.png"></a>
+<a href="http://tiny.cc/kah-lua"><img width="150" align="right" alt="qr" src="https://tiny.cc/tiny/qr-image/tiny.cc~kah-lua~l~150.png"></a>
 
 **Sections:** [NAME](#name) | [SYNOPSIS](#synopsis) | [OPTIONS](#options) | [TESTS](#tests) | [OUTPUT](#output) | [EXIT](#exit) | [SEE ALSO](#see-also) | [LICENSE](#license) | [AUTHOR](#author)
 
-**Files:** [tumm.lua](#file-tumm-lua) | [tumm-0.1-1.rockspec](#file-tumm-0-1-1-rockspec) | [Makefile](#file-makefile)
+**Files:** [kah.lua](#file-kah-lua) | [kah-1.0.0-1.rockspec](#file-kah-1-0-0-1-rockspec) | [Makefile](#file-makefile)
 
 ## NAME
 
-    tumm - useful short lua functions. one file, zero deps,
+    kah - useful short lua functions. one file, zero deps,
     Lua 5.3+. import as a library or run its demos from the
     command line.
 
 ## SYNOPSIS
 
-    local l = require"tumm"          -- library
-    lua tumm.lua [-h] [--ACTION]...  -- demos/tests
+    local l = require"kah"           -- library
+    lua kah.lua [-h] [--ACTION]...   -- demos/tests
 
-    luarocks install tumm            -- via luarocks
+    luarocks install kah             -- via luarocks
 
 ## OPTIONS
 
-    Topic areas inside tumm.lua (one ## section each):
+    Topic areas inside kah.lua (one ## section each):
 
       rand     srand rand any anys shuffle pickDict irwinHall
                (portable Park-Miller PRNG: seeded runs match
@@ -60,8 +59,8 @@ lua tumm.lua --all
 
     Every action is a test; --all runs them all:
 
-      lua tumm.lua --all
-      lua tumm.lua --lists --stats     # run a subset
+      lua kah.lua --all
+      lua kah.lua --lists --stats      # run a subset
 
     Actions: --confuse --copy --csv --lists --obj --rand
              --sames --stats --str
@@ -70,7 +69,7 @@ lua tumm.lua --all
 
 ## OUTPUT
 
-    E.g. `lua tumm.lua --stats`:
+    E.g. `lua kah.lua --stats`:
 
       -- --stats
       mu = 3
@@ -86,7 +85,7 @@ lua tumm.lua --all
 ## SEE ALSO
 
     konfig    http://tiny.cc/konfig   shared Makefile, dotfiles
-    lull      http://tiny.cc/lull     AI primitives built in
+    luamine   http://tiny.cc/luamine  AI primitives built in
                                       this same style
     optimiz   http://tiny.cc/optimiz  example CSV datasets
 

@@ -3,8 +3,8 @@
 # live in $(KONFIG)/Makefile
 KONFIG ?= ../konfig
 
-APP     := tumm
-MAIN    := tumm.lua
+APP     := kah
+MAIN    := kah.lua
 EXT     := lua
 LANG    := lua
 COMMENT := --
@@ -17,10 +17,10 @@ $(KONFIG)/Makefile:
 	@test -f $@ || { echo "missing konfig: git clone http://tiny.cc/konfig $(KONFIG)"; exit 1; }
 include $(KONFIG)/Makefile
 
-## tumm-specific ----------------------------------------------
+## kah-specific ----------------------------------------------
 
 ALL: ## test: every eg ends "all pass"
-	@lua tumm.lua --all | tee /dev/stderr | grep -q "^all pass"
+	@lua kah.lua --all | tee /dev/stderr | grep -q "^all pass"
 
 test: ## run every UPPERCASE rule
 	@gawk -F: '/^[A-Z][A-Z_]*:[^=]/ {print $$1}' $(MAKEFILE_LIST) | \
