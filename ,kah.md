@@ -19,7 +19,7 @@ lua kah.lua --all
 
 **Sections:** [NAME](#name) | [SYNOPSIS](#synopsis) | [OPTIONS](#options) | [TESTS](#tests) | [OUTPUT](#output) | [EXIT](#exit) | [SEE ALSO](#see-also) | [LICENSE](#license) | [AUTHOR](#author)
 
-**Files:** [kah.lua](#file-kah-lua) | [kah-1.0.0-1.rockspec](#file-kah-1-0-0-1-rockspec) | [Makefile](#file-makefile)
+**Files:** [kah.lua](http://tiny.cc/kah-lua#file-kah-lua) | [kah-1.0.0-1.rockspec](http://tiny.cc/kah-lua#file-kah-1-0-0-1-rockspec) | [Makefile](http://tiny.cc/kah-lua#file-makefile)
 
 ## NAME
 
