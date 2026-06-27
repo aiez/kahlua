@@ -15,8 +15,6 @@ git clone https://github.com/aiez/kahlua kah && cd kah
 lua kah.lua --all
 ```
 
-<a href="https://github.com/aiez/kahlua"><img width="150" align="right" alt="qr" src="https://tiny.cc/tiny/qr-image/tiny.cc~kah-lua~l~150.png"></a>
-
 **Sections:** [NAME](#name) | [SYNOPSIS](#synopsis) | [OPTIONS](#options) | [TESTS](#tests) | [OUTPUT](#output) | [EXIT](#exit) | [SEE ALSO](#see-also) | [LICENSE](#license) | [AUTHOR](#author)
 
 **Files:** [kah.lua](https://github.com/aiez/kahlua#file-kah-lua) | [kah-1.0.0-1.rockspec](https://github.com/aiez/kahlua#file-kah-1-0-0-1-rockspec) | [Makefile](https://github.com/aiez/kahlua#file-makefile)
