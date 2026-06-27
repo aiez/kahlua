@@ -14,7 +14,7 @@ PKG     := lua gawk luacheck neovim tmux
 
 # loud failure if konfig not cloned (include resolves at parse time)
 $(KONFIG)/Makefile:
-	@test -f $@ || { echo "missing konfig: git clone http://tiny.cc/konfig $(KONFIG)"; exit 1; }
+	@test -f $@ || { echo "missing konfig: git clone https://github.com/aiez/konfig $(KONFIG)"; exit 1; }
 include $(KONFIG)/Makefile
 
 ## kah-specific ----------------------------------------------

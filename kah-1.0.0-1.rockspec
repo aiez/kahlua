@@ -2,7 +2,7 @@ rockspec_format = "3.0"
 package = "kah"
 version = "1.0.0-1"
 source = {
-  -- gist git url; tiny.cc/kah-lua redirects to the gist page
+  -- gist git url; https://github.com/aiez/kahlua redirects to the gist page
   url = "git+https://gist.github.com/timm/4990faa5b0ddc9b1db2e17ce310b205e.git"
 }
 description = {
@@ -16,7 +16,7 @@ bisect, cliffsDelta, ks, sames, topTier), a confusion matrix
 (Confuse), a portable seeded PRNG, a one-line metatable OO binder,
 and a tiny test harness (chk, run1, main). Run `lua kah.lua --all`
 for the self-test/demo suite.]],
-  homepage = "http://tiny.cc/kah-lua",
+  homepage = "https://github.com/aiez/kahlua",
   license = "MIT",
   labels = { "utilities", "lists", "csv", "statistics" },
   maintainer = "Tim Menzies <timm@ieee.org>"

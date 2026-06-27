@@ -3,5 +3,5 @@
 | |/ / _` | '_ \
 |   < (_| | | | |
 |_|\_\__,_|_| |_|
-useful short lua functions. http://tiny.cc/kah-lua
+useful short lua functions. https://github.com/aiez/kahlua
 "the bits that kept reappearing."

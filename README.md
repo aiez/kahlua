@@ -1,7 +1,7 @@
 <!-- Copyright (c) 2026 Tim Menzies, MIT License https://opensource.org/licenses/MIT -->
 <a href="https://timm.fyi"><img align="right" alt="Author" src="https://img.shields.io/badge/Author-timm-dc143c?logo=readme&logoColor=white"></a><img align="right" alt="Language" src="https://img.shields.io/badge/Language-Lua-000080?logo=lua&logoColor=white"><img align="right" alt="License" src="https://img.shields.io/badge/License-MIT-32cd32?logo=open-source-initiative&logoColor=white"><img align="right" alt="Purpose" src="https://img.shields.io/badge/Purpose-Utilities·Teaching-7b68ee?logo=githubcopilot&logoColor=white">
 
-### [http://tiny.cc/kah-lua](http://tiny.cc/kah-lua)
+### [https://github.com/aiez/kahlua](https://github.com/aiez/kahlua)
 KAH: one file, ~50 short Lua functions that kept reappearing
 across my other Lua projects: lists, strings, random, csv, stats
 (incl. effect-size tests + confusion matrix), objects, tests. No
@@ -10,16 +10,16 @@ comment, a few lines of code, 65 columns max.
 
 ```bash
 # install and test
-git clone http://tiny.cc/konfig ../konfig
-git clone http://tiny.cc/kah-lua kah && cd kah
+git clone https://github.com/aiez/konfig ../konfig
+git clone https://github.com/aiez/kahlua kah && cd kah
 lua kah.lua --all
 ```
 
-<a href="http://tiny.cc/kah-lua"><img width="150" align="right" alt="qr" src="https://tiny.cc/tiny/qr-image/tiny.cc~kah-lua~l~150.png"></a>
+<a href="https://github.com/aiez/kahlua"><img width="150" align="right" alt="qr" src="https://tiny.cc/tiny/qr-image/tiny.cc~kah-lua~l~150.png"></a>
 
 **Sections:** [NAME](#name) | [SYNOPSIS](#synopsis) | [OPTIONS](#options) | [TESTS](#tests) | [OUTPUT](#output) | [EXIT](#exit) | [SEE ALSO](#see-also) | [LICENSE](#license) | [AUTHOR](#author)
 
-**Files:** [kah.lua](http://tiny.cc/kah-lua#file-kah-lua) | [kah-1.0.0-1.rockspec](http://tiny.cc/kah-lua#file-kah-1-0-0-1-rockspec) | [Makefile](http://tiny.cc/kah-lua#file-makefile)
+**Files:** [kah.lua](https://github.com/aiez/kahlua#file-kah-lua) | [kah-1.0.0-1.rockspec](https://github.com/aiez/kahlua#file-kah-1-0-0-1-rockspec) | [Makefile](https://github.com/aiez/kahlua#file-makefile)
 
 ## NAME
 
@@ -84,10 +84,10 @@ lua kah.lua --all
 
 ## SEE ALSO
 
-    konfig    http://tiny.cc/konfig   shared Makefile, dotfiles
-    luamine   http://tiny.cc/luamine  AI primitives built in
+    konfig    https://github.com/aiez/konfig   shared Makefile, dotfiles
+    luamine   https://github.com/aiez/luamine  AI primitives built in
                                       this same style
-    optimiz   http://tiny.cc/optimiz  example CSV datasets
+    optimiz   https://github.com/aiez/optimiz  example CSV datasets
 
 ## LICENSE
 
