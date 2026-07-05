@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 package = "kah"
-version = "1.0.0-1"
+version = "1.0.0-2"
 source = {
   url = "git+https://github.com/aiez/kahlua"
 }
