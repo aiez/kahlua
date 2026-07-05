@@ -2,8 +2,7 @@ rockspec_format = "3.0"
 package = "kah"
 version = "1.0.0-1"
 source = {
-  -- gist git url; https://github.com/aiez/kahlua redirects to the gist page
-  url = "git+https://gist.github.com/timm/4990faa5b0ddc9b1db2e17ce310b205e.git"
+  url = "git+https://github.com/aiez/kahlua"
 }
 description = {
   summary = "Useful short lua functions (lists, csv, stats, rand, tests)",
